@@ -1,0 +1,29 @@
+function [c, ceq] = nonLinearConstraints(x, x_state, N, lbx, ubx)
+    I = x;
+    ceq = [];
+    c = [];
+    
+    Qbatt = 6000;  % A.sec of the battery   #100 Ahr=3600*100As\n",
+    
+    SOC = [x_state(1); zeros(N-1,1)]; 
+    V1 =  [x_state(2); zeros(N-1,1)];
+    V2 =  [x_state(3); zeros(N-1,1)];
+    Tc =  [x_state(4); zeros(N-1,1)];
+    Ts =  [x_state(5); zeros(N-1,1)];
+    
+    for t = 1:N-1
+%         [R0, R1, C1, R2, C2, Rc, Cc, Rs, Cs, Tair] = getParameters(SOC, Tc, I);
+%         Vocv = (14.7958*SOC(t)^6 -36.6148 * SOC(t)^5 + 29.2355 * SOC(t)^4 - 6.2817 * SOC(t)^3 - 1.6476 * SOC(t)^2 + 1.2866 * SOC(t) + 3.4049);
+%         Vbatt = Vocv - V1(t)- V2(t) - R0*I(t);
+%         Qgen = abs(I(t) * (Vocv - Vbatt));   
+        c1 = -SOC (t+1) + SOC(t) - 1/Qbatt * I(t);
+%         c2 = -V1(t+1) + V1(t) - 1/(R1*C1) * V1(t) + 1/C1 * I(t);
+%         c3 = -V2(t+1) + V2(t) - 1/(R2*C2) * V2(t) + 1/C2 * I(t);
+%         c4 = -Tc(t+1) +  Tc(t) + Qgen/Cc + 1/(Rc*Cc) * (Ts(t)-Tc(t));
+%         c5 = -Ts(t+1) + Ts(t) + (Tair - Ts(t))/(Cs*Rs)-(Ts(t)-Tc(t))/(Cs*Rc);
+        ceq = [ceq;c1];
+%         c = [c; [eye(5);-eye(5)]*[SOC(t) V1(t) V2(t) Tc(t) Ts(t)]'-[ubx;-lbx]];
+        c = [c; SOC(t)-1];
+    end
+end
+

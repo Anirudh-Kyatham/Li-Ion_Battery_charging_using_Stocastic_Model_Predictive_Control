@@ -1,0 +1,25 @@
+function [F, H] = Jacobian(x_in,u_in
+
+% Define symbolic variables
+syms SOC V1 V2 Tc Ts
+syms I
+syms Vocv Rs
+% syms Qbatt R0 R1 C1 R2 C2 Rc Cc Rs Cs Tc Ts Tair 
+ 
+% Define state vector and input vector
+x = [SOC V1 V2 Tc Ts];
+u = [I];
+ 
+% Call the battery model function symbolically
+dx_symbolic = xdot(x, u);
+
+Vocv = 14.7958*SOC^6-36.6148 * SOC^5 + 29.2355 * SOC^4 -6.2817 * SOC^3 - 1.6476 * SOC^2 + 1.2866 * SOC + 3.4049;
+dy_symbolic = [Vocv-V1-V2-I*Rs;
+               Ts];
+ 
+% Compute the Jacobian matrix
+F = jacobian(dx_symbolic, x);
+
+H = jacobian(dy_symbolic, x);
+
+end
